@@ -7,31 +7,85 @@
 // Example: 5! = 5 x 4 x 3 x 2 x 1 = 120
 // factorial(5); // 120
 var factorial = function(n) {
+  if (n < 0) {
+    return null;
+  }
+  if (n === 0) {
+    return 1;
+  }
+  return n * factorial(n - 1);
 };
 
 // 2. Compute the sum of an array of integers.
 // sum([1,2,3,4,5,6]); // 21
 var sum = function(array) {
+  if (array.length === 0) {
+    return 0;
+  }
+  return array[0] + sum(array.slice(1));
 };
 
 // 3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
 var arraySum = function(array) {
+  var sum = 0;
+  for (var i = 0; i < array.length; i++) {
+    if (!Array.isArray(array[i])) {
+      sum += array[i];
+    }
+    sum += arraySum(array[i]);
+  }
+  return sum;
 };
 
 // 4. Check if a number is even.
 var isEven = function(n) {
+  n = Math.abs(n);
+  if (n === 0) {
+    return true;
+  } else if (n === 1) {
+    return false;
+  }
+  return isEven(n - 2);
 };
 
 // 5. Sum all integers below a given integer.
 // sumBelow(10); // 45
 // sumBelow(7); // 21
 var sumBelow = function(n) {
+  if (n === 0) {
+    return 0;
+  }
+  if (n > 0) {
+    return (n - 1) + sumBelow(n - 1);
+  } else {
+    return (n + 1) + sumBelow(n + 1);
+  }
 };
 
 // 6. Get the integers within a range (x, y).
 // range(2,9); // [3,4,5,6,7,8]
 var range = function(x, y) {
+  if (x === y || x === (y + 1) || x === (y - 1)) {
+    return [];
+  }
+  if (x < y) {
+    if (y - x === 2) {
+      return [x + 1];
+    } else {
+      var array = range(x, y - 1);
+      array.push(y - 1);
+      return array;
+    }
+  } else {
+    if (x - y === 2) {
+      return [y + 1];
+    } else {
+      var array = range(x - 1, y);
+      array.unshift(x - 1);
+      return array;
+    }
+  }
 };
 
 // 7. Compute the exponent of a number.
@@ -40,6 +94,19 @@ var range = function(x, y) {
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function(base, exp) {
+  if (exp === 0){ return 1; }
+  console.log(base, exp)
+  if (exp === 0) {
+    return 1;
+  } else if (exp < 0) {
+    return  1 / (base * exponent(base, -1 * exp - 1));
+  } else {
+    // if (exp % 2 === 0) {
+
+    // } else {
+      return base * exponent(base, exp - 1);
+    // }
+  }
 };
 
 // 8. Determine if a number is a power of two.
@@ -47,14 +114,34 @@ var exponent = function(base, exp) {
 // powerOfTwo(16); // true
 // powerOfTwo(10); // false
 var powerOfTwo = function(n) {
+  if (n === 1 || n === 2) {
+    return true;
+  } else if (n === 0 || (n % 2 === 1)) {
+    return false;
+  } else {
+    return powerOfTwo(n / 2);
+  }
 };
 
 // 9. Write a function that reverses a string.
 var reverse = function(string) {
+  if (string === '') {
+    return '';
+  }
+  return string[string.length - 1] + reverse(string.slice(0, string.length - 1));
 };
 
 // 10. Write a function that determines if a string is a palindrome.
 var palindrome = function(string) {
+  string = string.toLowerCase();
+  if (string.length <= 1) {
+    return true;
+  }
+  if (string[0] === string[string.length - 1]) {
+    return palindrome(string.slice(1, string.length - 1));
+  } else {
+    return false;
+  }
 };
 
 // 11. Write a function that returns the remainder of x divided by y without using the
@@ -63,17 +150,77 @@ var palindrome = function(string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 var modulo = function(x, y) {
+  console.log(x, y)
+  if (y === 0) {
+    return NaN;
+  }
+  if (isNaN(x) || isNaN(y)) {
+    return NaN;
+  }
+  if (x === 0) {
+    return 0;
+  }
+
+  if (x < 0) {
+    var posX = -x;
+  } else {
+    var posX = x;
+  }
+
+  if (y < 0) {
+    y = -y;
+  }
+
+  if (posX < y) {
+    return x;
+
+  } else {
+    if (x > 0) {
+      return modulo(x - y, y);
+    } else {
+      return modulo(x + y, y)
+    }
+  }
+
 };
 
 // 12. Write a function that multiplies two numbers without using the * operator or
 // Math methods.
 var multiply = function(x, y) {
+  if (x === 0 || y === 0) {
+    return 0;
+  }
+
+  if (y > 0) {
+    return x + multiply(x, y - 1);
+  } else {
+    return -x + multiply(x, y + 1);
+  }
 };
 
 // 13. Write a function that divides two numbers without using the / operator or
 // Math methods to arrive at an approximate quotient (ignore decimal endings).
 var divide = function(x, y) {
-};
+
+  if (y === 0) {
+    return NaN;
+  }
+  if (x === 0) {
+    return 0;
+  }
+  if (x < 0 && y > 0 && -x < y || x < -y) {
+    return 0;
+  }
+  if (x > 0 && y > 0 && x < y) {
+    return 0;
+  }
+
+  if (x > 0 && y > 0) {
+    return 1 + divide(x - y, y);
+  } else {
+    return -1 + divide(x + y, y);
+  }
+}
 
 // 14. Find the greatest common divisor (gcd) of two positive numbers. The GCD of two
 // integers is the greatest integer that divides both x and y with no remainder.
@@ -81,6 +228,22 @@ var divide = function(x, y) {
 // http://www.cse.wustl.edu/~kjg/cse131/Notes/Recursion/recursion.html
 // https://www.khanacademy.org/computing/computer-science/cryptography/modarithmetic/a/the-euclidean-algorithm
 var gcd = function(x, y) {
+  if (x < 0 || y < 0 || (x === 0 && y === 0)) {
+    return null;
+  }
+  if (x === 0) {
+    return y;
+  } else if (y === 0) {
+    return x;
+  } else {
+    if (x > y) {
+      var rest = x % y;
+      return gcd(y, rest);
+    } else {
+      var rest = y % x;
+      return gcd(x, rest);
+    }
+  }
 };
 
 // 15. Write a function that compares each character of two strings and returns true if
@@ -88,21 +251,52 @@ var gcd = function(x, y) {
 // compareStr('house', 'houses') // false
 // compareStr('tomato', 'tomato') // true
 var compareStr = function(str1, str2) {
+  if (str1 === '' && str2 === '') {
+    return true;
+  } else {
+    var firstChar1 = str1.slice(0, 1);
+    var firstChar2 = str2.slice(0, 1);
+    str1 = str1.slice(1, str1.length);
+    str2 = str2.slice(1, str2.length);
+    if (firstChar1 !== firstChar2) {
+      return false;
+    } else {
+      return compareStr(str1, str2);
+    }
+  }
 };
 
 // 16. Write a function that accepts a string and creates an array where each letter
 // occupies an index of the array.
 var createArray = function(str) {
+  if (str === '') {
+    return [];
+  } else {
+    var firstChar = str[0];
+    str = str.slice(1, str.length);
+    return [firstChar].concat(createArray(str));
+  }
 };
 
 // 17. Reverse the order of an array
 var reverseArr = function(array) {
+  if (array.length === 0) {
+    return [];
+  } else {
+    var lastElement = array.pop();
+    return [lastElement].concat(reverseArr(array));
+  }
 };
 
 // 18. Create a new array with a given value and length.
 // buildList(0,5) // [0,0,0,0,0]
 // buildList(7,3) // [7,7,7]
 var buildList = function(value, length) {
+  if (length === 0) {
+    return [];
+  } else {
+    return [value].concat(buildList(value, length - 1));
+  }
 };
 
 // 19. Implement FizzBuzz. Given integer n, return an array of the string representations of 1 to n.
@@ -111,17 +305,44 @@ var buildList = function(value, length) {
 // For numbers which are multiples of both three and five, output “FizzBuzz” instead of the number.
 // fizzBuzz(5) // ['1','2','Fizz','4','Buzz']
 var fizzBuzz = function(n) {
+  if (n === 0) {
+    return [];
+  } else if (n % 15 === 0) {
+    return fizzBuzz(n - 1).concat('FizzBuzz');
+  } else if (n % 5 === 0) {
+    return fizzBuzz(n - 1).concat('Buzz');
+  } else if (n % 3 === 0) {
+    return fizzBuzz(n - 1).concat('Fizz');
+  } else {
+    return fizzBuzz(n - 1).concat(n.toString());
+  }
 };
 
 // 20. Count the occurence of a value in a list.
 // countOccurrence([2,7,4,4,1,4], 4) // 3
 // countOccurrence([2,'banana',4,4,1,'banana'], 'banana') // 2
 var countOccurrence = function(array, value) {
+  if (array.length === 0) {
+    return 0;
+  }
+  if (array[array.length - 1] === value) {
+    var counter = 1;
+    array.pop();
+    return counter + countOccurrence(array, value);
+  } else {
+    var counter = 0;
+    array.pop();
+    return counter + countOccurrence(array, value);
+  }
 };
 
 // 21. Write a recursive version of map.
 // rMap([1,2,3], timesTwo); // [2,4,6]
 var rMap = function(array, callback) {
+  if (array.length === 0) {
+    return [];
+  }
+  return [callback(array[0])].concat(rMap(array.slice(1), callback));
 };
 
 // 22. Write a function that counts the number of times a key occurs in an object.
@@ -185,6 +406,14 @@ var nestedEvenSum = function(obj) {
 // 30. Flatten an array containing nested arrays.
 // flatten([1,[2],[3,[[4]]],5]); // [1,2,3,4,5]
 var flatten = function(array) {
+  var result = [];
+  if (!Array.isArray(array)) {
+    return array;
+  }
+  for (var i = 0; i < array.length; i++) {
+    result = result.concat(flatten(array[i]));
+  }
+  return result;
 };
 
 // 31. Given a string, return an object containing tallies of each letter.
