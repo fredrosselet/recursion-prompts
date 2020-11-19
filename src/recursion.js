@@ -27,16 +27,27 @@ var sum = function(array) {
 
 // 3. Sum all numbers in an array containing nested arrays.
 // arraySum([1,[2,3],[[4]],5]); // 15
-var arraySum = function(array) {
+var arraySum = function(input) {
   var sum = 0;
-  for (var i = 0; i < array.length; i++) {
-    if (!Array.isArray(array[i])) {
-      sum += array[i];
-    }
-    sum += arraySum(array[i]);
+  if (typeof input === 'number') {
+    sum += input;
+  }
+  for (var i = 0; i < input.length; i++) {
+    sum += arraySum(input[i]);
   }
   return sum;
-};
+}
+// SOLUTION 2
+// var arraySum = function(array) {
+//   var sum = 0;
+//   for (var i = 0; i < array.length; i++) {
+//     if (!Array.isArray(array[i])) {
+//       sum += array[i];
+//     }
+//     sum += arraySum(array[i]);
+//   }
+//   return sum;
+// };
 
 // 4. Check if a number is even.
 var isEven = function(n) {
@@ -94,8 +105,6 @@ var range = function(x, y) {
 // exponent(4,3); // 64
 // https://www.khanacademy.org/computing/computer-science/algorithms/recursive-algorithms/a/computing-powers-of-a-number
 var exponent = function(base, exp) {
-  if (exp === 0){ return 1; }
-  console.log(base, exp)
   if (exp === 0) {
     return 1;
   } else if (exp < 0) {
@@ -150,7 +159,6 @@ var palindrome = function(string) {
 // modulo(17,5) // 2
 // modulo(22,6) // 4
 var modulo = function(x, y) {
-  console.log(x, y)
   if (y === 0) {
     return NaN;
   }
@@ -349,7 +357,17 @@ var rMap = function(array, callback) {
 // var obj = {'e':{'x':'y'},'t':{'r':{'e':'r'},'p':{'y':'r'}},'y':'e'};
 // countKeysInObj(obj, 'r') // 1
 // countKeysInObj(obj, 'e') // 2
-var countKeysInObj = function(obj, key) {
+var countKeysInObj = function(obj, target) {
+  var count = 0;
+  for (var key in obj) {
+    if (key === target) {
+      count++;
+    }
+    if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+      count += countKeysInObj(obj[key], target);
+    }
+  }
+  return count;
 };
 
 // 23. Write a function that counts the number of times a value occurs in an object.
@@ -357,12 +375,34 @@ var countKeysInObj = function(obj, key) {
 // countValuesInObj(obj, 'r') // 2
 // countValuesInObj(obj, 'e') // 1
 var countValuesInObj = function(obj, value) {
+  var count = 0;
+  for (var key in obj) {
+    if (obj[key] === value) {
+      count++;
+    }
+    if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+      count += countValuesInObj(obj[key], value);
+    }
+  }
+  return count;
 };
 
 // 24. Find all keys in an object (and nested objects) by a provided name and rename
 // them to a provided new name while preserving the value stored at that key.
-var replaceKeysInObj = function(obj, oldKey, newKey) {
+function replaceKeysInObj(obj, oldKey, newKey) {
+  for (var key in obj) {
+    if (key === oldKey) {
+      var value = obj[oldKey];
+      obj[newKey] = value;
+      delete obj[oldKey];
+    }
+    if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+      replaceKeysInObj(obj[key], oldKey, newKey);
+    }
+  }
+  return obj;
 };
+
 
 // 25. Get the first n Fibonacci numbers. In the Fibonacci sequence, each subsequent
 // number is the sum of the previous two.
@@ -370,6 +410,14 @@ var replaceKeysInObj = function(obj, oldKey, newKey) {
 // fibonacci(5); // [0,1,1,2,3,5]
 // Note: The 0 is not counted.
 var fibonacci = function(n) {
+  if (n <= 0) {
+    return null;
+  } else if (n === 1) {
+    return [0, 1];
+  }
+  var series = fibonacci(n - 1);
+  series.push(series[series.length - 1] + series[series.length - 2]);
+  return series;
 };
 
 // 26. Return the Fibonacci number located at index n of the Fibonacci sequence.
@@ -378,17 +426,33 @@ var fibonacci = function(n) {
 // nthFibo(7); // 13
 // nthFibo(3); // 2
 var nthFibo = function(n) {
+  if (n < 0) {
+    return null;
+  } else if (n === 0) {
+    return 0;
+  } else if (n === 1) {
+    return 1;
+  }
+  return nthFibo(n - 1) + nthFibo(n - 2);
 };
 
 // 27. Given an array of words, return a new array containing each word capitalized.
 // var words = ['i', 'am', 'learning', 'recursion'];
 // capitalizedWords(words); // ['I', 'AM', 'LEARNING', 'RECURSION']
 var capitalizeWords = function(array) {
+  if (array.length === 0) {
+    return [];
+  }
+  return [array[0].toUpperCase()].concat(capitalizeWords(array.slice(1)));
 };
 
 // 28. Given an array of strings, capitalize the first letter of each index.
 // capitalizeFirst(['car','poop','banana']); // ['Car','Poop','Banana']
 var capitalizeFirst = function(array) {
+  if (array.length === 0) {
+    return [];
+  }
+  return [(array[0][0].toUpperCase() + array[0].slice(1))].concat(capitalizeFirst(array.slice(1)));
 };
 
 // 29. Return the sum of all even numbers in an object containing nested objects.
@@ -401,6 +465,16 @@ var capitalizeFirst = function(array) {
 // };
 // nestedEvenSum(obj1); // 10
 var nestedEvenSum = function(obj) {
+  var sum = 0;
+  for (var key in obj) {
+    if (typeof obj[key] === 'number' && obj[key] % 2 === 0) {
+      sum += obj[key];
+    }
+    if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+      sum += nestedEvenSum(obj[key]);
+    }
+  }
+  return sum;
 };
 
 // 30. Flatten an array containing nested arrays.
