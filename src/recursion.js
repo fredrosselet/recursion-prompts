@@ -109,12 +109,11 @@ var exponent = function(base, exp) {
     return 1;
   } else if (exp < 0) {
     return  1 / (base * exponent(base, -1 * exp - 1));
+  }
+  if (exp % 2 === 1) {
+    return base * exponent(base, exp - 1);
   } else {
-    // if (exp % 2 === 0) {
-
-    // } else {
-      return base * exponent(base, exp - 1);
-    // }
+    return exponent(base, (exp / 2)) ** 2;
   }
 };
 
@@ -493,6 +492,18 @@ var flatten = function(array) {
 // 31. Given a string, return an object containing tallies of each letter.
 // letterTally('potato'); // {p:1, o:2, t:2, a:1}
 var letterTally = function(str, obj) {
+  if (str.length === 0) {
+    return obj;
+  }
+  if (obj === undefined) {
+    obj = {};
+  }
+  if (obj[str[0]] !== undefined) {
+    obj[str[0]]++;
+  } else {
+    obj[str[0]] = 1;
+  }
+  return letterTally(str.slice(1), obj);
 };
 
 // 32. Eliminate consecutive duplicates in a list. If the list contains repeated
