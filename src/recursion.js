@@ -600,7 +600,53 @@ var numToText = function(str) {
 
 // 37. Return the number of times a tag occurs in the DOM.
 var tagCount = function(tag, node) {
+  var count = 0;
+  node = node || document.body;
+  var string = node.tagName.toLowerCase();
+
+  if (string === tag) {
+    count++;
+  }
+  if (node.hasChildNodes()) {
+    for (var i = 0; i < node.children.length; i++) {
+      var childrenCount = tagCount(tag, node.children[i]);
+      count += childrenCount;
+    }
+  }
+  console.log(count);
+  return count;
 };
+
+
+// var countValuesInObj = function(obj, value) {
+//   var count = 0;
+//   for (var key in obj) {
+//     if (obj[key] === value) {
+//       count++;
+//     }
+//     if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+//       count += countValuesInObj(obj[key], value);
+//     }
+//   }
+//   return count;
+// };
+
+// $rootElement = $('<div id="tagCountTest"><p>beep</p><div><p><span>blip</span></p></div><p>blorp</p></div>');
+
+        // var getElementsByClassName = function(className, node) {
+        //   var nodes = [];
+        //   node = node || document.body;
+        //   var parts = node.className.split(' ');
+        //   if (parts.indexOf(className) > -1) {
+        //     nodes.push(node);
+        //   }
+
+        //   for (var i = 0; i < node.children.length; i++) {
+        //     var childResults = getElementsByClassName(className, node.children[i]);
+        //     nodes = nodes.concat(childResults);
+        //   }
+        //   return nodes;
+        // };
 
 // 38. Write a function for binary search.
 // var array = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
