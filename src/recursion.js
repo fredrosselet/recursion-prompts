@@ -613,53 +613,47 @@ var tagCount = function(tag, node) {
       count += childrenCount;
     }
   }
-  console.log(count);
   return count;
 };
-
-
-// var countValuesInObj = function(obj, value) {
-//   var count = 0;
-//   for (var key in obj) {
-//     if (obj[key] === value) {
-//       count++;
-//     }
-//     if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-//       count += countValuesInObj(obj[key], value);
-//     }
-//   }
-//   return count;
-// };
-
-// $rootElement = $('<div id="tagCountTest"><p>beep</p><div><p><span>blip</span></p></div><p>blorp</p></div>');
-
-        // var getElementsByClassName = function(className, node) {
-        //   var nodes = [];
-        //   node = node || document.body;
-        //   var parts = node.className.split(' ');
-        //   if (parts.indexOf(className) > -1) {
-        //     nodes.push(node);
-        //   }
-
-        //   for (var i = 0; i < node.children.length; i++) {
-        //     var childResults = getElementsByClassName(className, node.children[i]);
-        //     nodes = nodes.concat(childResults);
-        //   }
-        //   return nodes;
-        // };
 
 // 38. Write a function for binary search.
 // var array = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
 // binarySearch(array, 5) // 5
 // https://www.khanacademy.org/computing/computer-science/algorithms/binary-search/a/binary-search
-var binarySearch = function(array, target, min, max) {
+var binarySearch = function(array, target, min = 0, max = array.length - 1) {
+  if (array.length === 0 || min > max) {
+    return null;
+  }
+  var midpoint = Math.floor((max + min) / 2);
+  if (target === array[midpoint]) {
+    return midpoint;
+  } else if (target < array[midpoint]) {
+    return binarySearch(array, target, min, midpoint - 1);
+  } else {
+    return binarySearch(array, target, midpoint + 1, max);
+  }
 };
 
 // 39. Write a merge sort function.
 // mergeSort([34,7,23,32,5,62]) // [5,7,23,32,34,62]
 // https://www.khanacademy.org/computing/computer-science/algorithms/merge-sort/a/divide-and-conquer-algorithms
 var mergeSort = function(array) {
+  var collection = array.slice();
+  if (collection.length === 0 || collection.length === 1) {
+    return collection;
+  }
+
+  var smallest = collection[0];
+  for (var i = 1; i < collection.length; i++) {
+    if (collection[i] < smallest) {
+      smallest = collection[i];
+    }
+  }
+
+  collection.splice(collection.indexOf(smallest), 1);
+  return [smallest].concat(mergeSort(collection));
 };
+
 
 // 40. Deeply clone objects and arrays.
 // var obj1 = {a:1,b:{bb:{bbb:2}},c:3};
@@ -667,4 +661,25 @@ var mergeSort = function(array) {
 // console.log(obj2); // {a:1,b:{bb:{bbb:2}},c:3}
 // obj1 === obj2 // false
 var clone = function(input) {
+  var copy;
+  if (typeof input === 'object' && Array.isArray(input)) {
+    copy = [];
+    for (var i = 0; i < input.length; i++) {
+      if (typeof input[i] !== 'object') {
+        copy.push(input[i]);
+      } else {
+        copy.push(clone(input[i]));
+      }
+    }
+  } else if (typeof input === 'object' && !Array.isArray(input)) {
+    copy = {};
+    for (var key in input) {
+      if (typeof input[key] !== 'object') {
+        copy[key] = input[key];
+      } else {
+        copy[key] = clone(input[key]);
+      }
+    }
+  }
+  return copy;
 };
